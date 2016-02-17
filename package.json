@@ -11,7 +11,12 @@
     "url": "git+https://github.com/jshcrowthe/gulp-wc-i18n.git"
   },
   "keywords": [
-    "i18n"
+    "gulp",
+    "i18n",
+    "gulpplugin",
+    "webcomponents",
+    "polymer",
+    "internationalization"
   ],
   "author": "Josh Crowther <jshcrowthe@gmail.com>",
   "license": "MIT",
