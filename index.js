@@ -67,7 +67,7 @@ module.exports = function () {
       }
 
       if (file.isBuffer()) {
-        var doc = dom5.parse(String(file.contents));
+        var doc = dom5.parseFragment(String(file.contents));
         var el = dom5.query(doc, srcTagFinder)
         if (el) {
           var componentName = dom5.getAttribute(el, 'domain');
