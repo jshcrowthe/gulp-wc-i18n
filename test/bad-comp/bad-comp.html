@@ -1,0 +1,26 @@
+<link rel="import" href="../../wc-i18n.html">
+
+<dom-module id="bad-comp">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <wc-i18n-src locale-map='[[_localeMapper()]]' locale-dir='[[localeDir()]]' domain='bad-comp'></wc-i18n-src>
+    <wc-i18n key='bad-comp.foo'></wc-i18n>
+  </template>
+  <script>
+    Polymer({
+      is: 'bad-comp',
+      behaviors: [
+        WCI18nBehavior
+      ],
+      _localeMapper: function() {
+        return function(key) {
+          return key.message;
+        }
+      }
+    });
+  </script>
+</dom-module>
