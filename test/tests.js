@@ -28,4 +28,17 @@ describe('gulp-wc-i18n', function() {
     }))
     .pipe(assert.end(done));
   });
+
+  it('should properly inject all locale files (if available)', function(done) {
+    var stream = StreamFactory('v2-comp');
+    stream.pipe(wcI18n({
+      version: 2
+    }))
+    .pipe(assert.first(function(d) { 
+      var contents = d.contents.toString().trim();
+      var expected = fs.readFileSync(path.join(__dirname, './outFiles/v2-comp.html'), 'utf8').trim();
+      expect(contents).to.equal(expected);
+    }))
+    .pipe(assert.end(done));
+  });
 });
