@@ -113,12 +113,14 @@ var wcI18nV2 = function(file, encoding, callback) {
         text: dom5.getTextContent(script)
       }
     }).filter(function(jsStringObj) {
-      return ~jsStringObj.text.indexOf('WCI18n');
+      return /\bWCI18n\b/.test(jsStringObj.text);
     }).map(function(jsStringObj) {
       return {
         script: jsStringObj.script,
         tree: ast(jsStringObj.text)
       };
+    }).filter(function(treeObj) {
+      return treeObj.tree.callExpression('WCI18n').length > 0;
     }).filter(function(treeObj) {
       return treeObj.tree.callExpression('WCI18n').arguments.length = 1;
     }).map(function(treeObj) {
@@ -130,6 +132,8 @@ var wcI18nV2 = function(file, encoding, callback) {
           translations: translations
         }
       });
+    }).filter(function(promises) {
+      return !!promises;
     });
 
     Promise.all(promises)
