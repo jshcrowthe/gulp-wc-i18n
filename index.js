@@ -121,10 +121,8 @@ var wcI18nV2 = function(file, encoding, callback) {
       };
     }).filter(function(treeObj) {
       return treeObj.tree.callExpression('WCI18n').length > 0;
-    }).filter(function(treeObj) {
-      return treeObj.tree.callExpression('WCI18n').arguments.length = 1;
     }).map(function(treeObj) {
-      var componentName = treeObj.tree.callExpression('WCI18n').arguments.at(0).value();
+      var componentName = treeObj.tree.callExpression('Polymer').arguments.at(0).key('is').value();
       return getTranslations(path.resolve(file.path, '../locales'), componentName).then(function(translations) {
         return {
           script: treeObj.script,

@@ -12,7 +12,25 @@
     Polymer({
       is: 'v2-comp',
       behaviors: [
-        WCI18n('v2-comp')
+        WCI18n()
+      ]
+    });
+  </script>
+</dom-module>
+
+<dom-module id="v2-comp-2">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+  </template>
+  <script>
+    Polymer({
+      is: 'v2-comp-2',
+      behaviors: [
+        WCI18n()
       ]
     });
   </script>
