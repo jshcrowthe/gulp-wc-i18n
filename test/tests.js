@@ -41,4 +41,15 @@ describe('gulp-wc-i18n', function() {
     }))
     .pipe(assert.end(done));
   });
+
+  it('should properly inject all locale files with expanded identifier (if available)', function(done) {
+    var stream = StreamFactory('expanded-comp');
+    stream.pipe(wcI18n())
+    .pipe(assert.first(function(d) { 
+      var contents = d.contents.toString().trim();
+      var expected = fs.readFileSync(path.join(__dirname, './outFiles/expanded-comp.html'), 'utf8').trim();
+      expect(contents).to.equal(expected);
+    }))
+    .pipe(assert.end(done));
+  });
 });
