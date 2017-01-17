@@ -24,7 +24,7 @@ var scriptTagFinder = pred.AND(
 )
 
 var slashRegex = /([^/]+$)/;
-var localeRegex = /.*_(.+).json$/;
+var localeRegex = /.*_([a-zA-z0-9\-]+).json$/;
 
 var flattenArray = function(obj, val) {
   Object.keys(val).forEach(function(key) {
