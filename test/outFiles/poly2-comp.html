@@ -1,0 +1,31 @@
+<link rel="import" href="../../wc-i18n.html">
+
+<dom-module id="poly2-comp">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+  </template>
+  <script>class Poly2Comp extends Polymer.mixinBehaviors([WCI18n({ 'en': { 'foo': 'This component has class!' } })], Polymer.Element) {
+    static get is() {
+        return 'poly2-comp';
+    }
+}</script>
+</dom-module>
+
+<dom-module id="poly2-comp-2">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+  </template>
+  <script>class Poly2Comp2 extends Polymer.mixinBehaviors([WCI18n({ 'en': { 'bar': 'The second part of this is great yeah?' } })], Polymer.Element) {
+    static get is() {
+        return 'poly2-comp-2';
+    }
+}</script>
+</dom-module>

@@ -58,7 +58,7 @@ var getTranslations = function(localePath, componentName) {
 var wcI18nV1 = function(file, encoding, callback) {
   if (file.isNull()) {
     this.push(file);
-    return callback();        
+    return callback();
   }
 
   if (file.isStream()) {
@@ -95,7 +95,7 @@ var wcI18nV1 = function(file, encoding, callback) {
 var wcI18nV2 = function(file, encoding, callback) {
   if (file.isNull()) {
     this.push(file);
-    return callback();        
+    return callback();
   }
 
   if (file.isStream()) {
@@ -122,7 +122,23 @@ var wcI18nV2 = function(file, encoding, callback) {
     }).filter(function(treeObj) {
       return treeObj.tree.callExpression('WCI18n').length > 0;
     }).map(function(treeObj) {
-      var componentName = treeObj.tree.callExpression('Polymer').arguments.at(0).key('is').value();
+      var componentName;
+      // check for Polymer 1.x constructor: Polymer({is:'my-element'})
+      const polymer1Constructor = treeObj.tree.callExpression('Polymer');
+      // check for Polymer 2.x class declaration: class MyElement extends Polymer.Element
+      const polymer2ClassDeclaration = treeObj.tree.body.node.filter(node => node.type === "ClassDeclaration");
+      if (polymer1Constructor.length) {
+        // Polymer 1.x
+        componentName = treeObj.tree.callExpression('Polymer').arguments.at(0).key('is').value();
+      } else if (polymer2ClassDeclaration.length) {
+        // Polymer 2.x
+        const classDecl = polymer2ClassDeclaration[0];
+        const isMethod = classDecl.body.body.find(method => {
+            return method.static && method.kind === 'get' && method.key.name === 'is';
+        });
+        componentName = isMethod.value.body.body[0].argument.value;
+      }
+      // console.log('componentName:', componentName);
       return getTranslations(path.resolve(file.path, '../locales'), componentName).then(function(translations) {
         return {
           script: treeObj.script,
