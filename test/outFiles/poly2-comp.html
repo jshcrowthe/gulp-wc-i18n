@@ -8,11 +8,13 @@
       }
     </style>
   </template>
-  <script>class Poly2Comp extends Polymer.mixinBehaviors([WCI18n({ 'en': { 'foo': 'This component has class!' } })], Polymer.Element) {
-    static get is() {
+  <script>
+    class Poly2Comp extends Polymer.mixinBehaviors([WCI18n({"en":{"foo":"This component has class!"}})], Polymer.Element) {
+      static get is() {
         return 'poly2-comp';
+      }
     }
-}</script>
+  </script>
 </dom-module>
 
 <dom-module id="poly2-comp-2">
@@ -23,9 +25,18 @@
       }
     </style>
   </template>
-  <script>class Poly2Comp2 extends Polymer.mixinBehaviors([WCI18n({ 'en': { 'bar': 'The second part of this is great yeah?' } })], Polymer.Element) {
-    static get is() {
+  <script>
+    class Poly2Comp2 extends Polymer.mixinBehaviors([WCI18n({"en":{"bar":"The second part of this is great yeah?"}})], Polymer.Element) {
+      static get is() {
         return 'poly2-comp-2';
+      }
+      ready() {
+        super.ready(); // this comment breaks ast-query
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        // this comment breaks ast-query
+      }
     }
-}</script>
+  </script>
 </dom-module>

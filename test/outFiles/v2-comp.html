@@ -8,10 +8,14 @@
       }
     </style>
   </template>
-  <script>Polymer({
-    is: 'v2-comp',
-    behaviors: [WCI18n({ 'en': { 'foo': 'What does fubar actually stand for?' } })]
-});</script>
+  <script>
+    Polymer({
+      is: 'v2-comp',
+      behaviors: [
+        WCI18n({"en":{"foo":"What does fubar actually stand for?"}})
+      ]
+    });
+  </script>
 </dom-module>
 
 <dom-module id="v2-comp-2">
@@ -22,8 +26,12 @@
       }
     </style>
   </template>
-  <script>Polymer({
-    is: 'v2-comp-2',
-    behaviors: [WCI18n({ 'en': { 'bar': 'The second part of this is great yeah?' } })]
-});</script>
+  <script>
+    Polymer({
+      is: 'v2-comp-2',
+      behaviors: [
+        WCI18n({"en":{"bar":"The second part of this is great yeah?"}})
+      ]
+    });
+  </script>
 </dom-module>

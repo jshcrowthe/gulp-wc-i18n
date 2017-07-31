@@ -30,6 +30,13 @@
       static get is() {
         return 'poly2-comp-2';
       }
+      ready() {
+        super.ready(); // this comment breaks ast-query
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        // this comment breaks ast-query
+      }
     }
   </script>
 </dom-module>
