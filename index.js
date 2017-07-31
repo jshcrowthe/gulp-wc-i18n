@@ -149,8 +149,10 @@ var wcI18nV2 = function(file, encoding, callback) {
     Promise.all(promises)
       .then(function(i18nObjArray) {
         i18nObjArray.forEach(function(i18nObj) {
-          i18nObj.callNode.update('WCI18n(' + JSON.stringify(i18nObj.translations) + ')');
-          dom5.setTextContent(i18nObj.script, i18nObj.output);
+          if (i18nObj.callNode) {
+            i18nObj.callNode.update('WCI18n(' + JSON.stringify(i18nObj.translations) + ')');
+            dom5.setTextContent(i18nObj.script, i18nObj.output);
+          }
         });
       })
       .then(function() {

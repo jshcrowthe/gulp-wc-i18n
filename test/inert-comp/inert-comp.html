@@ -1,0 +1,20 @@
+<link rel="import" href="../../wc-i18n.html">
+
+<dom-module id="v2-comp">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+  </template>
+  <script>
+    // This component references WCI18n but doesn't call the WCI18n() constructor so shouldn't be injected
+    Polymer({
+      is: 'inert-comp',
+      _someCalculation: function() {
+        console.log(window.WCI18n);
+      }
+    });
+  </script>
+</dom-module>
