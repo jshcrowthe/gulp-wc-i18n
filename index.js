@@ -7,8 +7,7 @@ var glob = require('glob');
 var dom5 = require('dom5');
 var path = require('path');
 var fs = require('fs');
-var q = require('q');
-var ast = require('ast-query');
+var falafel = require("falafel");
 var pred = dom5.predicates;
 
 var srcTagFinder = pred.AND(
@@ -45,20 +44,20 @@ var fetchJSONContent = function(file) {
 };
 
 var getTranslations = function(localePath, componentName) {
-  var dfd = q.defer();
-
-  glob(localePath + '/' + componentName + '_' + '*.json', function(err, files) {
-    var srcLocales = files.map(fetchJSONContent).reduce(flattenArray, {});
-    dfd.resolve(srcLocales);
+  return new Promise(function(resolve, reject) {
+    glob(localePath + '/' + componentName + '_' + '*.json', function(err, files) {
+      if (err) reject(err);
+      var srcFiles = files.map(fetchJSONContent).reduce(flattenArray, {});
+      resolve(srcFiles);
+    });
   });
-
-  return dfd.promise;
 };
 
 var wcI18nV1 = function(file, encoding, callback) {
+  console.warn('Deprecated: wc-i18n V1 is deprecated and will be removed in the next version. Please upgrade to V2');
   if (file.isNull()) {
     this.push(file);
-    return callback();        
+    return callback();
   }
 
   if (file.isStream()) {
@@ -95,7 +94,7 @@ var wcI18nV1 = function(file, encoding, callback) {
 var wcI18nV2 = function(file, encoding, callback) {
   if (file.isNull()) {
     this.push(file);
-    return callback();        
+    return callback();
   }
 
   if (file.isStream()) {
@@ -115,18 +114,31 @@ var wcI18nV2 = function(file, encoding, callback) {
     }).filter(function(jsStringObj) {
       return /\bWCI18n\b/.test(jsStringObj.text);
     }).map(function(jsStringObj) {
-      return {
-        script: jsStringObj.script,
-        tree: ast(jsStringObj.text)
-      };
-    }).filter(function(treeObj) {
-      return treeObj.tree.callExpression('WCI18n').length > 0;
-    }).map(function(treeObj) {
-      var componentName = treeObj.tree.callExpression('Polymer').arguments.at(0).key('is').value();
+      var componentName, callNode;
+
+      var output = falafel(jsStringObj.text, function (node) {
+        // console.log('node', require('util').inspect(node, { depth: null }));
+
+        // check for Polymer 1.x constructor: Polymer({is:'my-element'})
+        if (node.type === 'Property' && node.key.name === 'is') {
+          componentName = node.value.value;
+        }
+        // check for Polymer 2.x class declaration: class MyElement extends Polymer.Element { static get is() {return 'my-element'} }
+        if (node.type === 'MethodDefinition' && node.static === true && node.kind === "get" && node.key.name === 'is') {
+          componentName = node.value.body.body[0].argument.value;
+        }
+        // find the call to the WCI18n constructor to update later
+        if (node.type === 'CallExpression' && node.callee.name === "WCI18n") {
+          callNode = node;
+        }
+      });
+
+      // console.log('componentName:', componentName);
       return getTranslations(path.resolve(file.path, '../locales'), componentName).then(function(translations) {
         return {
-          script: treeObj.script,
-          tree: treeObj.tree,
+          script: jsStringObj.script,
+          callNode: callNode,
+          output: output,
           translations: translations
         }
       });
@@ -137,9 +149,10 @@ var wcI18nV2 = function(file, encoding, callback) {
     Promise.all(promises)
       .then(function(i18nObjArray) {
         i18nObjArray.forEach(function(i18nObj) {
-          var args = i18nObj.tree.callExpression('WCI18n').arguments;
-          args.push(JSON.stringify(i18nObj.translations));
-          dom5.setTextContent(i18nObj.script, i18nObj.tree.toString());
+          if (i18nObj.callNode) {
+            i18nObj.callNode.update('WCI18n(' + JSON.stringify(i18nObj.translations) + ')');
+            dom5.setTextContent(i18nObj.script, i18nObj.output);
+          }
         });
       })
       .then(function() {
